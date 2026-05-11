@@ -16,6 +16,11 @@ export async function POST(request: Request) {
     const summary = await generateAuditSummary(result);
     const publicId = nanoid(10);
 
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      console.warn('Supabase credentials missing. Returning audit result without persistence.');
+      return NextResponse.json({ publicId });
+    }
+
     const { data, error } = await supabase
       .from('audits')
       .insert({
