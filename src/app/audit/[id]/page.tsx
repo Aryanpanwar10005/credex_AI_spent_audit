@@ -15,8 +15,9 @@ async function getAudit(id: string) {
   return data;
 }
 
-export default async function AuditResultsPage({ params }: { params: { id: string } }) {
-  const audit = await getAudit(params.id);
+export default async function AuditResultsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const audit = await getAudit(id);
 
   if (!audit) {
     notFound();
@@ -32,7 +33,7 @@ export default async function AuditResultsPage({ params }: { params: { id: strin
       <div className="bg-white border-b border-gray-100 pt-32 pb-16">
         <div className="max-w-5xl mx-auto px-4 pt-12 flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div>
-            <h1 className="text-4xl font-light text-gray-900 mb-2">Audit Report <span className="font-mono text-sm text-gray-400">#{params.id.slice(0, 8)}</span></h1>
+            <h1 className="text-4xl font-light text-gray-900 mb-2">Audit Report <span className="font-mono text-sm text-gray-400">#{id.slice(0, 8)}</span></h1>
             <p className="text-gray-500 max-w-2xl">
               A comprehensive analysis of your organization&apos;s AI tool architecture, identifying redundancies, licensing inefficiencies, and enterprise credit eligibility.
             </p>
@@ -189,7 +190,7 @@ export default async function AuditResultsPage({ params }: { params: { id: strin
             </div>
 
             {/* Lead Capture Form */}
-            <LeadForm auditId={params.id} />
+            <LeadForm auditId={id} />
 
             {/* Share Section */}
             <div className="institutional-card">
@@ -197,7 +198,7 @@ export default async function AuditResultsPage({ params }: { params: { id: strin
               <div className="flex gap-2">
                 <input 
                   readOnly 
-                  value={`https://audit.credex.io/audit/${params.id}`} 
+                  value={`https://audit.credex.io/audit/${id}`} 
                   className="flex-1 bg-gray-50 border border-gray-100 px-3 py-2 text-xs font-mono text-gray-500 outline-none"
                 />
                 <button className="bg-gray-100 hover:bg-gray-200 p-2 transition-colors">

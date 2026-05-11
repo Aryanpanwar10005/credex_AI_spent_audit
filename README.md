@@ -23,13 +23,13 @@ A financial intelligence tool for engineering managers and startup founders who 
 > _Add 3 screenshots before final submission — see note below_
 
 **Screen 1 — Landing page & audit form**
-![Landing Page](./public/screenshots/screenshot-landing.png)
+![Landing Page](public/screenshots/screenshot-landing.png)
 
 **Screen 2 — Audit results with savings breakdown**
-![Audit Results](./public/screenshots/screenshot-results.png)
+![Audit Results](public/screenshots/screenshot-results.png)
 
 **Screen 3 — Credex consultation CTA (high-spend trigger)**
-![Credex CTA](./public/screenshots/screenshot-credex-cta.png)
+![Credex CTA](public/screenshots/screenshot-credex-cta.png)
 
 > 📌 _Screenshots captured at 1440×900 on the deployed Vercel URL. Run `npm run dev` and screenshot at `/` and `/audit/[any-id]`._
 
@@ -92,10 +92,10 @@ NEXT_PUBLIC_APP_BASE_URL=http://localhost:3000
 ```
 
 ### 3. Set Up the Database
-Run the schema SQL in your Supabase SQL editor (see `local/schema.sql`):
+Run the schema SQL in your Supabase SQL editor (see `internal/schema.sql`):
 ```sql
 -- audits table, leads table, and RLS policies
--- Full schema at: local/schema.sql
+-- Full schema at: internal/schema.sql
 ```
 
 ### 4. Run Locally
@@ -176,7 +176,7 @@ See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for the full workflow
 │       ├── pricing.ts          # Verified 2026 pricing registry
 │       ├── summary.ts          # Claude API integration + fallback
 │       └── __tests__/          # Vitest unit tests
-├── local/                      # Internal research, schema, plans (git-ignored)
+├── internal/                   # Internal research, schema, plans (git-ignored)
 ├── .github/workflows/ci.yml    # CI: lint + test on every push
 ├── README.md
 ├── ARCHITECTURE.md

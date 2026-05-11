@@ -144,12 +144,13 @@ export default function AuditForm() {
                     value={input.planName}
                     onChange={(e) => {
                       const tool = PRICING_REGISTRY[input.toolKey];
+                      if (!tool) return;
                       const plan = tool.plans.find(p => p.name === e.target.value);
                       updateInput(index, { planName: e.target.value, monthlySpend: plan ? plan.price * input.teamSize : 0 });
                     }}
                     className="w-full border-b border-gray-200 py-1 focus:border-[#086841] outline-none bg-transparent text-gray-900"
                   >
-                    {PRICING_REGISTRY[input.toolKey].plans.map(plan => (
+                    {PRICING_REGISTRY[input.toolKey]?.plans.map(plan => (
                       <option key={plan.name} value={plan.name}>{plan.name}</option>
                     ))}
                   </select>
