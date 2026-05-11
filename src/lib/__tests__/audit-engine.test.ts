@@ -30,21 +30,9 @@ describe('Audit Engine', () => {
 
   it('should suggest Team plan for large groups on individual Claude accounts', () => {
     const inputs: UserInput[] = [
-      { toolKey: 'claude', planName: 'Pro', teamSize: 10, monthlySpend: 200, usageLevel: 'medium' },
-    ];
-
-    // Note: Team plan is $30/user/mo, but I need to check my logic.
-    // Wait, in my pricing.ts, Claude Team is $30/user/mo.
-    // 10 users * $20 = $200.
-    // 10 users * $30 = $300.
-    // My logic says: if (teamCost < currentCost). So it shouldn't suggest it here.
-    // Let's adjust spend to $400 (maybe enterprise?) or change logic.
-    
-    // If they were paying $40/user for some reason:
-    const inputs2: UserInput[] = [
       { toolKey: 'claude', planName: 'Pro', teamSize: 10, monthlySpend: 400, usageLevel: 'medium' },
     ];
-    const result = runAudit(inputs2);
+    const result = runAudit(inputs);
     const billingRec = result.recommendations.find(r => r.issue === 'Subscription Fragmentation');
     expect(billingRec).toBeDefined();
     expect(billingRec?.potentialSavings).toBe(100); // 400 - (30 * 10)
@@ -57,12 +45,21 @@ describe('Audit Engine', () => {
     ];
 
     const result = runAudit(inputs);
-    // Overlap savings: 10 (Copilot)
-    // Billing savings: 4 (Cursor Annual)
-    // Total monthly savings: 14
-    // Annual: 14 * 12 = 168
     
     expect(result.monthlySavings).toBe(14);
     expect(result.annualSavings).toBe(168);
+  });
+
+  it('should identify Credex credit eligibility for high spend', () => {
+    const inputs: UserInput[] = [
+      { toolKey: 'cursor', planName: 'Pro', teamSize: 50, monthlySpend: 1000, usageLevel: 'high' },
+      { toolKey: 'github_copilot', planName: 'Individual', teamSize: 50, monthlySpend: 500, usageLevel: 'high' }
+    ];
+
+    const result = runAudit(inputs);
+    const credexRec = result.recommendations.find(r => r.type === 'credex');
+    
+    expect(credexRec).toBeDefined();
+    expect(result.isHighValueAudit).toBe(true);
   });
 });

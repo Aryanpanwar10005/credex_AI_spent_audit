@@ -13,6 +13,10 @@ AI Spend Audit helps organizations uncover "shadow AI" spend, identify redundant
 - **Pricing Intelligence**: Up-to-date 2026 pricing registry for major AI providers.
 - **Lead Capture**: Integrated conversion funnel for institutional auditing services.
 
+## Live Links
+- **Deployed URL**: [https://credex-ai-audit.vercel.app](https://credex-ai-audit.vercel.app)
+- **Video Walkthrough**: [Loom / Youtube Link Placeholder]
+
 ## Tech Stack
 
 - **Core**: Next.js 14+ (App Router), TypeScript.
@@ -43,6 +47,28 @@ AI Spend Audit helps organizations uncover "shadow AI" spend, identify redundant
    ```bash
    npm run dev
    ```
+
+## Technical & Product Decisions
+
+### 1. Deterministic Engine vs. LLM Logic
+**Decision**: Logic-heavy TypeScript for calculations; LLM only for narrative.  
+**Trade-off**: Increases development time for the registry but ensures 100% audit accuracy and CFO-ready data integrity.
+
+### 2. Bespoke CSS vs. Component Library
+**Decision**: Vanilla CSS tokens and custom components over Shadcn/UI.  
+**Trade-off**: Required more manual styling effort but achieved a unique "Institutional Minimalist" brand identity that avoids the "AI-generated" look.
+
+### 3. Public Audit IDs
+**Decision**: Using UUID-based public routes (`/audit/[id]`) for report sharing.  
+**Trade-off**: Increases database complexity but creates a high-conversion viral loop within organizations.
+
+### 4. Privacy-First Manual Entry
+**Decision**: Manual seat-count entry instead of OAuth-based tool integrations.  
+**Trade-off**: Higher friction for the user, but eliminates the massive security/trust hurdle of requesting access to corporate AI accounts.
+
+### 5. Monospace Data Paradigm
+**Decision**: Use of `JetBrains Mono` for all financial figures.  
+**Trade-off**: Breaks the "sleek consumer" aesthetic in favor of "professional audit" clarity, which builds higher perceived authority.
 
 ## Development & Compliance
 

@@ -26,5 +26,22 @@ By identifying these inefficiencies, Credex can offer a "Cost Neutral" migration
 - **Direct**: $0 (The tool is a lead generator).
 - **Indirect**: Customer Acquisition Cost (CAC) reduction. By capturing high-intent leads via the audit, Credex reduces the sales cycle by 30%.
 
-## 5. Long-term Sustainability
+## 6. Path to $1M ARR
+To achieve $1M ARR from this specific lead-gen channel, we model the following conversion funnel:
+- **Audits Per Month**: 2,000 (Targeting mid-market CTOs).
+- **Lead Conversion (Email capture)**: 15% (300 leads/mo).
+- **High-Value Qualified Leads (>50 developers)**: 10% (30 leads/mo).
+- **Credex Conversion Rate**: 20% (6 new enterprise customers/mo).
+- **Average Contract Value (ACV)**: $15,000/year.
+- **Monthly Revenue Addition**: $90,000.
+- **Annual Run Rate (Month 12)**: ~$1,080,000.
+
+## 7. Unit Economics (Lead Value vs. CAC)
+- **Cost Per Audit (CPA)**: $2.50 (Ad-spend + compute).
+- **Cost Per Lead (CPL)**: $16.67.
+- **Customer Acquisition Cost (CAC)**: $833.00.
+- **LTV (Lifetime Value)**: $45,000 (3-year retention).
+- **LTV/CAC Ratio**: 54x (Highly efficient acquisition).
+
+## 8. Long-term Sustainability
 As AI tool prices inevitably decrease due to commoditization, the Audit Engine will pivot toward "Performance Auditing"—measuring the *productivity* ROI of the tool stack rather than just the license cost.
