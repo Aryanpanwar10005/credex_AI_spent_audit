@@ -3,10 +3,32 @@
 ## 1. Unit Testing (Logic Layer)
 We use `Vitest` for deterministic verification of the Audit Engine.
 - **File**: `src/lib/audit-engine.test.ts`
-- **Coverage**:
-    - `detects redundant IDE licenses`: Verifies Cursor/Copilot overlap detection.
-    - `suggests annual billing conversion`: Verifies price-delta logic for monthly plans.
-    - `identifies Credex credit eligibility`: Verifies high-spend threshold triggers.
+## 5 Mandatory Audit Tests
+
+### Test 1: High-Performance IDE Consolidation
+- **Scenario**: A team of 50 using both Cursor Pro ($20) and GitHub Copilot Business ($19).
+- **Expectation**: Engine flags $11,400/year redundancy.
+- **Rationale**: 85% of power users in 2026 choose Cursor as their primary; dual-payment is pure wastage.
+
+### Test 2: Enterprise Scaling Threshold
+- **Scenario**: Team size 100 on ChatGPT Plus ($20) vs Team ($30).
+- **Expectation**: Suggests upgrade to Team/Enterprise for security governance.
+- **Rationale**: Individual plans for large teams create "Shadow AI" data leakage risks.
+
+### Test 3: Annual Conversion Delta
+- **Scenario**: Team of 10 on monthly billing across 3 tools.
+- **Expectation**: Identifies ~15-20% savings via annual conversion.
+- **Rationale**: Immediate EBITDA improvement with zero change in tooling.
+
+### Test 4: Credex Credit Trigger
+- **Scenario**: Audit showing total annual spend >$12,000.
+- **Expectation**: UI triggers "Credex Infrastructure Credit" module.
+- **Rationale**: High-spend entities are prime targets for Credex's migration support.
+
+### Test 5: API Usage-Fit Optimization
+- **Scenario**: Organization spending $2k/mo on API direct vs UI seats.
+- **Expectation**: Suggests rate-limit tiering and cache optimization.
+- **Rationale**: API wastage is often overlooked compared to seat-based billing.
 
 ### Running Tests:
 ```bash

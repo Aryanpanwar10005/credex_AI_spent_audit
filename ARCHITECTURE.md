@@ -8,6 +8,22 @@
 - **AI Engine**: Anthropic Claude 3.5 Sonnet (via SDK)
 - **Testing**: Vitest (Unit & Logic Testing)
 
+## System Diagram
+
+```mermaid
+graph TD
+    A[User Input: AuditForm] --> B[API Route: /api/audit]
+    B --> C[Audit Engine: TypeScript Logic]
+    C --> D[Pricing Registry: 2026 Data]
+    B --> E[Supabase: JSON Storage]
+    B --> F[Anthropic API: Executive Narrative]
+    E --> G[Audit Results Page]
+    F --> G
+    G --> H[Lead Capture: LeadForm]
+    H --> I[Supabase: Leads Table]
+    G --> J[CTA: Credex Credits]
+```
+
 ## System Components
 
 ### 1. The Audit Engine (`src/lib/audit-engine.ts`)

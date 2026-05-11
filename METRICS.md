@@ -20,8 +20,19 @@
 - **NPS (Net Promoter Score)**: Gathered via follow-up emails.
 - **Repeat Usage**: Users who return to re-audit their stack after 6 months.
 
-## 5. Monitoring Dashboard
-We recommend a centralized dashboard (e.g., Grafana or Supabase Charts) to track:
-- Geographic distribution of audits.
-- Most frequent "redundant" tool pairs (e.g., Cursor + Copilot).
-- Cumulative savings identified for the global user base.
+## 5. North Star Metric
+**Total Potential Savings Identified ($)**  
+This metric aligns the user's value (saving money) with Credex's value (capturing that saved budget for infrastructure).
+
+## 6. Input Metrics
+- **Mean Tools Per Audit**: Indicates the depth of the audit engagement.
+- **Viral Share Rate**: % of reports shared via the public URL.
+
+## 7. Pivot Trigger
+If the **Lead Conversion Rate** (Email capture) stays below **5%** for three consecutive months, we will pivot the tool from a "Self-Service Audit" to a **"Browser Extension"** that automatically detects AI tool usage patterns, reducing the friction of manual entry.
+
+## 8. Instrumentation Plan
+- **Vercel Analytics**: For page-view and conversion funnel tracking.
+- **Supabase Post-Auth Hooks**: To trigger transactional emails via Resend.
+- **PostHog**: For event tracking on specific form interactions (e.g., which tool is deleted most often).
+- **Logflare**: For structured logging of Audit Engine exceptions.
