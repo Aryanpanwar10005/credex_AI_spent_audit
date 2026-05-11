@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #111827;
+    --accent: #086841;
+    --accent-foreground: #ffffff;
+    --muted: #f3f4f6;
+    --muted-foreground: #6b7280;
+    --border: #e5e7eb;
+    --grid-color: rgba(229, 231, 235, 0.5);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-feature-settings: "cv02", "cv03", "cv04", "ss01";
+    -webkit-font-smoothing: antialiased;
+    background-image: 
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
+
+@layer components {
+  .institutional-card {
+    @apply border border-[var(--border)] bg-white p-6 transition-all duration-200;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+
+  .institutional-card:hover {
+    @apply border-[var(--accent)] shadow-md;
+  }
+
+  .btn-primary {
+    @apply bg-[var(--accent)] text-white px-6 py-2 font-medium hover:bg-[#065032] transition-colors;
+  }
+
+  .data-text {
+    @apply font-mono text-sm tracking-tight;
+  }
+}
+
+/* Custom selection color to match brand */
+::selection {
+  background-color: #086841;
+  color: white;
+}
