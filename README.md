@@ -1,8 +1,8 @@
 # Credex AI Spend Audit
 
-> **The free "Mint for AI tool spend" — built as a lead-gen engine for [Credex](https://credex.rocks).**
+> **The free "Mint for AI tool spend" — a lead-gen engine for [Credex](https://credex.rocks).**
 
-A financial intelligence tool for engineering managers and startup founders who pay for AI subscriptions every month without knowing if they're overspending. Input your stack, get an instant audit showing redundant tools, over-provisioned plans, and total savings — then share the result via a unique public URL.
+Credex AI Spend Audit is a free web app for engineering managers and startup founders who pay for AI subscriptions without knowing if they're overspending. You input your stack — tools, plans, seats, use case — and get an instant audit showing redundant tools, over-provisioned plans, and total potential monthly and annual savings, shareable via a unique public URL.
 
 **Who it's for:** Engineering managers and technical co-founders at 5–200 person startups paying for Cursor, GitHub Copilot, Claude, ChatGPT, Gemini, or Anthropic/OpenAI API access.
 
@@ -12,15 +12,12 @@ A financial intelligence tool for engineering managers and startup founders who 
 
 | | |
 |---|---|
-| **Live App** | [https://credex-ai-audit.vercel.app](https://credex-ai-audit.vercel.app) |
-| **Demo Walkthrough** | [Loom / YouTube — add link before submission] |
+| **Live App** | [https://credex-ai-spent-audit.vercel.app](https://credex-ai-spent-audit.vercel.app) |
 | **GitHub Repo** | [https://github.com/Aryanpanwar10005/credex_AI_spent_audit](https://github.com/Aryanpanwar10005/credex_AI_spent_audit) |
 
 ---
 
 ## 📸 Screenshots
-
-> _Add 3 screenshots before final submission — see note below_
 
 **Screen 1 — Landing page & audit form**
 ![Landing Page](public/screenshots/screenshot-landing.png)
@@ -31,18 +28,16 @@ A financial intelligence tool for engineering managers and startup founders who 
 **Screen 3 — Credex consultation CTA (high-spend trigger)**
 ![Credex CTA](public/screenshots/screenshot-credex-cta.png)
 
-> 📌 _Screenshots captured at 1440×900 on the deployed Vercel URL. Run `npm run dev` and screenshot at `/` and `/audit/[any-id]`._
-
 ---
 
 ## What Was Built
 
 A full-stack web application that performs an end-to-end AI spend audit:
 
-1. **Spend Input Form** — Users enter their AI tools, plans, seats, and monthly spend. Form state persists across reloads via `localStorage`.
-2. **Audit Engine** — A deterministic TypeScript engine (no LLM) evaluates each tool for plan fit, redundancy, and alternative tool savings. Every recommendation has a one-sentence reasoning string a finance person can verify.
-3. **Results Page** — Hero showing total monthly + annual savings. Per-tool breakdown. Conditional Credex CTA for audits showing >$500/mo savings. "You're spending well" path for optimized stacks.
-4. **AI-Generated Summary** — Cerebras Cloud SDK (llama3.1-8b) generates a ~100-word "high-finance" executive narrative with sub-second latency. Graceful fallback to a templated summary on API failure.
+1. **Spend Input Form** — Users enter their AI tools, plans, seats, and monthly spend. Supports Cursor, GitHub Copilot, Claude, ChatGPT, Gemini, Anthropic API, OpenAI API, and Windsurf. Form state persists across reloads via `localStorage`.
+2. **Audit Engine** — A deterministic TypeScript engine (no LLM) evaluates each tool for plan fit, redundancy, and alternative tool savings. Every recommendation has a one-sentence reasoning string a finance person can verify. Pricing data verified against official vendor pages as of submission week.
+3. **Results Page** — Hero showing total monthly + annual savings. Per-tool breakdown with current spend → recommended action → savings + reason. Conditional Credex CTA for audits showing >$500/mo savings. "You're spending well" path for optimized stacks.
+4. **AI-Generated Summary** — Cerebras Cloud SDK (`llama3.1-8b`) generates a ~100-word "high-finance" executive narrative with sub-second latency. Graceful fallback to a templated summary on API failure.
 5. **Lead Capture** — Email + optional company/role/team size. Stored in Supabase. Transactional confirmation email via Resend.
 6. **Shareable URL** — Each audit gets a UUID-based public route (`/audit/[publicId]`). Identifying details stripped. Full Open Graph and Twitter Card metadata for clean social previews.
 
@@ -56,9 +51,9 @@ A full-stack web application that performs an end-to-end AI spend audit:
 | Language | TypeScript | Type safety critical for a financial audit tool |
 | Styling | Tailwind CSS + custom CSS tokens | Bespoke "Institutional Minimalist" design system; avoids generic UI library look |
 | Animation | Framer Motion | Micro-interactions on form entry and results reveal |
-| Database | Supabase (PostgreSQL) | Free-tier, instant REST API, RLS for privacy |
+| Database | Supabase (PostgreSQL) | Free-tier, instant REST API, RLS for data privacy |
 | Email | Resend | Simple API, free tier, 3000 emails/mo |
-| AI | Cerebras Cloud SDK | Extreme performance for real-time narrative; fallback on failure |
+| AI | Cerebras Cloud SDK | Sub-second latency for real-time narrative; graceful fallback on failure |
 | Testing | Vitest | Lightweight, fast, native ESM support for the audit engine logic |
 | CI/CD | GitHub Actions | Lint + test on every push to `main` |
 | Deploy | Vercel | Zero-config Next.js deployment |
@@ -70,8 +65,8 @@ A full-stack web application that performs an end-to-end AI spend audit:
 ### Prerequisites
 - Node.js 18+
 - A Supabase project (free tier)
-- An Anthropic API key
-- A Resend API key
+- A Cerebras API key (free at [cloud.cerebras.ai](https://cloud.cerebras.ai))
+- A Resend API key (free tier)
 
 ### 1. Clone & Install
 ```bash
@@ -86,16 +81,16 @@ Create a `.env.local` file at the root:
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-ANTHROPIC_API_KEY=your_anthropic_api_key
+CEREBRAS_API_KEY=your_cerebras_api_key
 RESEND_API_KEY=your_resend_api_key
 NEXT_PUBLIC_APP_BASE_URL=http://localhost:3000
 ```
 
 ### 3. Set Up the Database
-Run the schema SQL in your Supabase SQL editor (see `internal/schema.sql`):
+Run the schema SQL in your Supabase SQL editor:
 ```sql
--- audits table, leads table, and RLS policies
 -- Full schema at: internal/schema.sql
+-- Creates: audits table, leads table, and RLS policies
 ```
 
 ### 4. Run Locally
@@ -113,7 +108,7 @@ npm test
 ### 6. Deploy to Vercel
 ```bash
 npx vercel --prod
-# Add all environment variables in the Vercel dashboard under Project Settings → Environment Variables
+# Set all environment variables in Vercel dashboard → Project Settings → Environment Variables
 ```
 
 ---
@@ -126,7 +121,7 @@ GitHub Actions runs on every push to `main`:
 ✅ npm test       — 5 Vitest unit tests on the audit engine
 ```
 
-See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for the full workflow. The latest commit should show a green ✅ check.
+See [`.github/workflows/ci.yml`](.github/workflows/ci.yml). The latest commit shows a green ✅ check.
 
 ---
 
@@ -154,7 +149,7 @@ See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for the full workflow
 
 ### 5. Monospace Typography for Financial Data
 **Decision:** All monetary figures rendered in `JetBrains Mono`, not the body font (Inter).  
-**Rationale:** Tabular data is cognitively easier to parse in monospace. More importantly, monospace signals *precision* — it looks like a terminal readout or a bank statement, not a blog post. This is a psychological trust signal for high-finance users who are accustomed to Bloomberg terminals and accounting software.  
+**Rationale:** Tabular data is cognitively easier to parse in monospace. More importantly, monospace signals *precision* — it looks like a terminal readout or a bank statement, not a blog post. This is a psychological trust signal for high-finance users accustomed to Bloomberg terminals and accounting software.  
 **Trade-off:** Breaks visual consistency with the body font pairing. Intentional — the dissonance is the design.
 
 ---
@@ -170,11 +165,11 @@ See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for the full workflow
 │   │   └── api/                # Route handlers (audit, lead, summary)
 │   ├── components/             # React UI components
 │   │   ├── AuditForm.tsx       # Multi-tool dynamic form with localStorage persist
-│   │   └── ...
+│   │   └── LeadForm.tsx        # Email capture with honeypot abuse protection
 │   └── lib/                    # Pure logic — no framework coupling
 │       ├── audit-engine.ts     # Deterministic audit rules
 │       ├── pricing.ts          # Verified 2026 pricing registry
-│       ├── summary.ts          # Claude API integration + fallback
+│       ├── ai-summary.ts       # Cerebras SDK integration + fallback
 │       └── __tests__/          # Vitest unit tests
 ├── internal/                   # Internal research, schema, plans (git-ignored)
 ├── .github/workflows/ci.yml    # CI: lint + test on every push
@@ -196,10 +191,10 @@ See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for the full workflow
 
 ## Security & Abuse Protection
 
-- **Honeypot field** on the audit submission form — bots are silently discarded.
+- **Honeypot field** on both the audit form and lead capture form — bots are silently discarded.
 - **Server-side rate limiting** on `/api/audit` and `/api/lead` — max 10 requests/hour per IP.
 - **No secrets in the repo** — all API keys via environment variables only.
-- **Supabase RLS** — public audit rows expose only tools and savings; email and company stripped from the public view.
+- **Supabase RLS** — public audit rows expose only tools and savings; email and company name are stripped from the public view.
 
 ---
 
