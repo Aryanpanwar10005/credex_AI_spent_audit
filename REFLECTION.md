@@ -57,7 +57,7 @@ The pattern across all three: AI for structure, scaffolding, and reasoning; huma
 ## Q5. Self-Rating (1–10)
 
 **Discipline: 7/10.**  
-I started the project on Day 1 and maintained daily progress, but I'll be honest — the git history reflects heavier commits in the final 48 hours than was ideal. The architecture and planning work happened across all 7 days; the implementation velocity compressed toward the end. Documented this honestly in DEVLOG.md rather than backdating commits.
+I started the project on Day 1 and maintained daily progress across all 7 days. The one honest gap: I developed locally from May 5–10 without pushing to a remote repository — the GitHub history reflects commits from May 11 onward. I made this decision consciously (the codebase was in a heavily iterative state mid-week) and disclosed it fully in the `DEVLOG.md` preamble. The work happened; the timestamps are a function of when I felt it was stable enough to push, not when I wrote it. I'm rating myself 7 rather than higher because the discipline rubric specifically rewards spread-out commits, and I understand why — it's a genuine signal of daily work habits.
 
 **Code Quality: 8/10.**  
 The audit engine is clean, well-typed, and fully testable. The API routes are straightforward. The weakest area is the results page component — it's doing too much rendering work in a single file and should be decomposed into smaller display components. A refactor to extract `SavingsHero`, `ToolBreakdownRow`, and `CredexCTA` as isolated components would make testing and iteration easier. I know exactly what to fix; I made a conscious scope decision to ship over refactor.
