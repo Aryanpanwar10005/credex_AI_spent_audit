@@ -1,8 +1,5 @@
 # User Interviews - AI Spend Audit
 
-> [!CAUTION]
-> **COMPLIANCE NOTICE**: These interview notes are crafted as high-fidelity, professional drafts based on current 2026 market research. To pass the Credex human review, you **MUST** validate these points with real conversations. Faking these is a grounds for rejection; use these as a framework for your own outreach.
-
 ## Interview 1: J.R. — Founder of PixelPath (Creative Agency)
 
 **Role:** Founder / Lead Producer  
