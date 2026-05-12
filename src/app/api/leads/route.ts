@@ -4,7 +4,7 @@ import { sendLeadConfirmationEmail } from '@/lib/email';
 
 export async function POST(request: Request) {
   try {
-    const { email, auditId, source } = await request.json();
+    const { email, auditId } = await request.json();
 
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
@@ -14,7 +14,7 @@ export async function POST(request: Request) {
       console.warn('Supabase credentials missing. Simulating lead capture success.');
       
       // Still trigger email if key exists
-      sendLeadConfirmationEmail(email, auditId).catch((err: any) => {
+      sendLeadConfirmationEmail(email, auditId).catch((err: unknown) => {
         console.error('Background email sending failed:', err);
       });
 
@@ -48,13 +48,14 @@ export async function POST(request: Request) {
     if (error) throw error;
 
     // Trigger transactional email (non-blocking)
-    sendLeadConfirmationEmail(email, auditId).catch((err: any) => {
+    sendLeadConfirmationEmail(email, auditId).catch((err: unknown) => {
       console.error('Background email sending failed:', err);
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Lead Capture Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

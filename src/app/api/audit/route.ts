@@ -21,16 +21,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ publicId });
     }
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('audits')
       .insert({
         public_id: publicId,
         input_data: inputs,
         result_data: result,
         ai_summary: summary,
-      })
-      .select()
-      .single();
+      });
 
     if (error) {
       console.error('Supabase error:', error);
@@ -38,7 +36,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ publicId });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error('API error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
