@@ -12,7 +12,7 @@
 - **Sales Velocity**: Reduction in time-to-close for leads that entered via the Audit tool.
 
 ## 3. Technical Performance Metrics
-- **API Latency**: Response time for the Anthropic-powered summary (Target <3s).
+- **API Latency**: Response time for the Cerebras-powered summary (Target <1s).
 - **Database Uptime**: Supabase availability.
 - **Lighthouse Score**: Maintaining 90+ in Performance, Accessibility, and Best Practices.
 
