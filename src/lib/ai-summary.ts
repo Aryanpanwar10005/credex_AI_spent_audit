@@ -1,12 +1,12 @@
-import Anthropic from '@anthropic-ai/sdk';
+import Cerebras from '@cerebras/cerebras_cloud_sdk';
 import { AuditResult } from './audit-engine';
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY || '',
+const client = new Cerebras({
+  apiKey: process.env.CEREBRAS_API_KEY || '',
 });
 
 export async function generateAuditSummary(result: AuditResult): Promise<string> {
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!process.env.CEREBRAS_API_KEY) {
     return "AI Summary is currently unavailable. Please check your configuration.";
   }
 
@@ -26,15 +26,18 @@ export async function generateAuditSummary(result: AuditResult): Promise<string>
   `;
 
   try {
-    const message = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-20240620",
+    const completion = await client.chat.completions.create({
+      messages: [{ role: 'user', content: prompt }],
+      model: 'llama3.1-8b',
       max_tokens: 300,
-      messages: [{ role: "user", content: prompt }],
     });
 
-    const content = message.content[0];
-    if (content.type === 'text') {
-      return content.text;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const choices = completion.choices as any[];
+    const content = choices[0]?.message?.content;
+    
+    if (content) {
+      return content;
     }
     return "Could not generate summary.";
   } catch (error) {

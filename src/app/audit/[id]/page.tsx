@@ -129,7 +129,7 @@ export default async function AuditResultsPage({ params }: { params: Promise<{ i
              AI Executive Summary
            </h3>
            <p className="text-gray-800 leading-relaxed font-medium italic">
-             "{audit.ai_summary || 'Generating analysis...'}"
+             &quot;{audit.ai_summary || 'Generating analysis...'}&quot;
            </p>
         </div>
 

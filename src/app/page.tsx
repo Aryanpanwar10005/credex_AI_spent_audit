@@ -80,7 +80,7 @@ export default function Home() {
               <h3 className="text-xl font-bold text-gray-900 mb-4">Overlap Detection</h3>
               <p className="text-gray-500 leading-relaxed">
                 We identify tool redundancy across categories. If Cursor is already in your stack, 
-                we'll flag Copilot as a potential consolidation opportunity.
+                we&apos;ll flag Copilot as a potential consolidation opportunity.
               </p>
             </div>
             <div>

@@ -39,7 +39,7 @@ export default function LeadForm({ auditId }: LeadFormProps) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <h4 className="text-lg font-bold text-gray-900 mb-1">Report Saved</h4>
-        <p className="text-sm text-gray-600">We've sent a permanent link to your inbox along with our AI Spend Optimization whitepaper.</p>
+        <p className="text-sm text-gray-600">We&apos;ve sent a permanent link to your inbox along with our AI Spend Optimization whitepaper.</p>
       </div>
     );
   }
@@ -47,7 +47,7 @@ export default function LeadForm({ auditId }: LeadFormProps) {
   return (
     <div className="bg-white border border-gray-200 p-6 rounded-sm shadow-sm">
       <h4 className="text-lg font-bold text-gray-900 mb-2">Save this Report</h4>
-      <p className="text-sm text-gray-500 mb-6">Receive a permanent link to these results and our "2026 AI Spend Benchmarks" whitepaper.</p>
+      <p className="text-sm text-gray-500 mb-6">Receive a permanent link to these results and our &quot;2026 AI Spend Benchmarks&quot; whitepaper.</p>
       
       <form onSubmit={handleSubmit} className="space-y-3">
         <input 
