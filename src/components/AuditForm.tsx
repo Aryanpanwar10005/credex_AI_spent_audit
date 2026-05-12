@@ -14,15 +14,15 @@ export default function AuditForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [honeypot, setHoneypot] = useState('');
 
-  // Load from localStorage
+  // Load from localStorage on mount (Client-side only)
   useEffect(() => {
     const saved = localStorage.getItem('credex_audit_form');
     if (saved) {
       try {
         const { inputs: sInputs, teamSize: sTeamSize, useCase: sUseCase } = JSON.parse(saved);
-        setInputs(sInputs || []);
-        setTeamSize(sTeamSize || 1);
-        setUseCase(sUseCase || 'coding');
+        if (sInputs) setInputs(sInputs);
+        if (sTeamSize) setTeamSize(sTeamSize);
+        if (sUseCase) setUseCase(sUseCase);
       } catch (e) {
         console.error('Failed to parse saved form state', e);
       }
