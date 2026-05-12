@@ -36,7 +36,7 @@ The most challenging moment was calibrating the **Redundancy Detection Logic**. 
 Originally, I planned to build a **Full Dashboard** where users could track their spend over time. I reversed this halfway through Day 3. I realized that for an MVP, the **"Shareable Audit URL"** was far more valuable for Credex as a lead-gen tool. Shifting from a "Management Tool" to a "Viral Report Generator" allowed me to focus all my design energy on the high-fidelity results page, which is the primary conversion point.
 
 ### AI Tool Usage Reflection
-I used **Claude 3.5 Sonnet** extensively for logic brainstorming and **Gemini 1.5 Pro** for document structuring. The AI was indispensable for generating the initial 2026 pricing registry (which I then manually verified). However, the "Institutional Minimalist" design was purely human-driven; AI-generated UI tended towards generic SaaS tropes (rounded corners, purple gradients) that didn't fit the Credex brand.
+I used **Claude 3.5 Sonnet** extensively for logic brainstorming and **Gemini 1.5 Pro** for document structuring. For the production AI summary engine, I integrated **Cerebras Cloud SDK** (using `llama3.1-8b`), which provided the sub-second latency required for a "premium-fast" audit experience. The AI was indispensable for generating the initial 2026 pricing registry (which I then manually verified). However, the "Institutional Minimalist" design was purely human-driven; AI-generated UI tended towards generic SaaS tropes (rounded corners, purple gradients) that didn't fit the Credex brand.
 
 ### Week 2 Plan
 If I had another week, I would:

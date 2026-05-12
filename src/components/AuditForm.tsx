@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PRICING_REGISTRY } from '@/lib/pricing';
@@ -12,6 +12,27 @@ export default function AuditForm() {
   const [teamSize, setTeamSize] = useState(1);
   const [useCase, setUseCase] = useState('coding');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [honeypot, setHoneypot] = useState('');
+
+  // Load from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('credex_audit_form');
+    if (saved) {
+      try {
+        const { inputs: sInputs, teamSize: sTeamSize, useCase: sUseCase } = JSON.parse(saved);
+        setInputs(sInputs || []);
+        setTeamSize(sTeamSize || 1);
+        setUseCase(sUseCase || 'coding');
+      } catch (e) {
+        console.error('Failed to parse saved form state', e);
+      }
+    }
+  }, []);
+
+  // Save to localStorage
+  useEffect(() => {
+    localStorage.setItem('credex_audit_form', JSON.stringify({ inputs, teamSize, useCase }));
+  }, [inputs, teamSize, useCase]);
 
   const addTool = () => {
     const firstToolKey = Object.keys(PRICING_REGISTRY)[0];
@@ -47,17 +68,21 @@ export default function AuditForm() {
   };
 
   const handleSubmit = async () => {
+    if (honeypot) return; // Silent discard for bots
+    
     setIsSubmitting(true);
     try {
       const response = await fetch('/api/audit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ inputs }),
+        body: JSON.stringify({ inputs, honeypot }),
       });
       
       const data = await response.json();
       if (data.error) throw new Error(data.error);
       
+      // Clear storage on successful submission
+      localStorage.removeItem('credex_audit_form');
       router.push(`/audit/${data.publicId}`);
     } catch (err) {
       console.error(err);
@@ -69,6 +94,17 @@ export default function AuditForm() {
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-4">
+      {/* Honeypot Field */}
+      <div className="hidden" aria-hidden="true">
+        <input 
+          type="text" 
+          value={honeypot} 
+          onChange={(e) => setHoneypot(e.target.value)} 
+          tabIndex={-1} 
+          autoComplete="off" 
+        />
+      </div>
+
       <div className="institutional-card mb-8">
         <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-gray-900">
           <span className="w-2 h-2 bg-[#086841] rotate-45" />
