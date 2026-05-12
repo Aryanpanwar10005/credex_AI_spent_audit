@@ -42,7 +42,7 @@ A full-stack web application that performs an end-to-end AI spend audit:
 1. **Spend Input Form** — Users enter their AI tools, plans, seats, and monthly spend. Form state persists across reloads via `localStorage`.
 2. **Audit Engine** — A deterministic TypeScript engine (no LLM) evaluates each tool for plan fit, redundancy, and alternative tool savings. Every recommendation has a one-sentence reasoning string a finance person can verify.
 3. **Results Page** — Hero showing total monthly + annual savings. Per-tool breakdown. Conditional Credex CTA for audits showing >$500/mo savings. "You're spending well" path for optimized stacks.
-4. **AI-Generated Summary** — Claude 3.5 Sonnet generates a ~100-word "high-finance" executive narrative. Graceful fallback to a templated summary on API failure.
+4. **AI-Generated Summary** — Cerebras Cloud SDK (llama3.1-8b) generates a ~100-word "high-finance" executive narrative with sub-second latency. Graceful fallback to a templated summary on API failure.
 5. **Lead Capture** — Email + optional company/role/team size. Stored in Supabase. Transactional confirmation email via Resend.
 6. **Shareable URL** — Each audit gets a UUID-based public route (`/audit/[publicId]`). Identifying details stripped. Full Open Graph and Twitter Card metadata for clean social previews.
 
@@ -58,7 +58,7 @@ A full-stack web application that performs an end-to-end AI spend audit:
 | Animation | Framer Motion | Micro-interactions on form entry and results reveal |
 | Database | Supabase (PostgreSQL) | Free-tier, instant REST API, RLS for privacy |
 | Email | Resend | Simple API, free tier, 3000 emails/mo |
-| AI | Anthropic Claude 3.5 Sonnet | Best narrative quality; fallback to template on failure |
+| AI | Cerebras Cloud SDK | Extreme performance for real-time narrative; fallback on failure |
 | Testing | Vitest | Lightweight, fast, native ESM support for the audit engine logic |
 | CI/CD | GitHub Actions | Lint + test on every push to `main` |
 | Deploy | Vercel | Zero-config Next.js deployment |

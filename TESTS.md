@@ -2,7 +2,7 @@
 
 ## 1. Unit Testing (Logic Layer)
 We use `Vitest` for deterministic verification of the Audit Engine.
-- **File**: `src/lib/audit-engine.test.ts`
+- **File**: `src/lib/__tests__/audit-engine.test.ts`
 ## 5 Mandatory Audit Tests
 
 ### Test 1: High-Performance IDE Consolidation
@@ -37,7 +37,7 @@ npm test
 
 ## 2. Integration Testing (Data Layer)
 - **Supabase Connectivity**: Verified via manual E2E flow (Audit submission -> Table verification).
-- **AI Integration**: Verified via mock and live testing of the Anthropic SDK response parsing.
+- **AI Integration**: Verified via mock and live testing of the Cerebras Cloud SDK (llama3.1-8b) response parsing.
 
 ## 3. UI/UX Verification
 - **Responsive Design**: Tested on Desktop (1440p), Tablet (iPad Pro), and Mobile (iPhone 15 Pro) viewports.
@@ -51,6 +51,6 @@ npm test
     - SEO: 92 (Baseline)
 
 ## 5. Security Checklist
-- **Environment Variables**: Validated that all API keys (Anthropic/Supabase) are server-side only.
+- **Environment Variables**: Validated that all API keys (Cerebras/Supabase) are server-side only.
 - **Input Sanitization**: Select-based inputs prevent SQL injection or malicious payload entry in the Audit Form.
-- **Rate Limiting**: Implemented on the `/api/audit` route.
+- **Abuse Protection**: Implemented Honeypot-based silent discarding on the `/api/audit` and `/api/leads` routes to prevent bot spam.

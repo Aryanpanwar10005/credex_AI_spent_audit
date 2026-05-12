@@ -10,16 +10,19 @@ export default function LeadForm({ auditId }: LeadFormProps) {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [honeypot, setHoneypot] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (honeypot) return; // Silent discard for bots
+    
     setIsSubmitting(true);
     
     try {
       const response = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, auditId }),
+        body: JSON.stringify({ email, auditId, honeypot }),
       });
       
       if (!response.ok) throw new Error('Failed to submit');
@@ -50,6 +53,18 @@ export default function LeadForm({ auditId }: LeadFormProps) {
       <p className="text-sm text-gray-500 mb-6">Receive a permanent link to these results and our &quot;2026 AI Spend Benchmarks&quot; whitepaper.</p>
       
       <form onSubmit={handleSubmit} className="space-y-3">
+        {/* Honeypot Field */}
+        <div className="hidden" aria-hidden="true">
+          <input 
+            type="text" 
+            name="website_url_verification" 
+            value={honeypot} 
+            onChange={(e) => setHoneypot(e.target.value)} 
+            tabIndex={-1} 
+            autoComplete="off" 
+          />
+        </div>
+
         <input 
           type="email" 
           required
