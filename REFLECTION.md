@@ -22,7 +22,7 @@ On Day 2, I planned to build a **persistent dashboard** — a logged-in experien
 
 I reversed this completely on Day 3 afternoon.
 
-The pivot trigger was re-reading the assignment brief: *"No login required to use the tool. Email is captured after value is shown, never before."* A dashboard requires login — which means friction before value. Every SaaS conversion funnel study I've read confirms this kills cold traffic. A user arriving from a tweet or Hacker News will not create an account to see if they might be overspending.
+The pivot trigger was re-reading the brief: *"No login required to use the tool. Email is captured after value is shown, never before."* A dashboard requires login — which means friction before value. Every SaaS conversion funnel study I've read confirms this kills cold traffic. A user arriving from a tweet or Hacker News will not create an account to see if they might be overspending.
 
 More importantly, I reframed who the tool actually was for. The dashboard mental model assumes a returning, engaged user. But the highest-value moment in this tool's lifecycle is the *first audit* — when a founder sees "$4,800/year in redundant seats" for the first time. That moment of shock is the conversion event. The shareable URL captures that moment and propagates it. A dashboard would have diluted the entire design effort toward a retention feature nobody would use at launch.
 
