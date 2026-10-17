@@ -1,201 +1,168 @@
-# Credex AI Spend Audit
+# AI Spend Audit
 
-> **The free "Mint for AI tool spend" — a lead-gen engine for [Credex](https://credex.rocks).**
+Teams pick up AI subscriptions one at a time, an IDE assistant here and a few chat seats there, and rarely check whether the tools overlap or the plans still fit. This free web app takes a team's AI stack (tools, plans, seats and monthly spend) and returns an audit: overlapping tools, plans that don't fit the team size, monthly billing that could be annual, and the total potential savings. Each audit gets a shareable link.
 
-Credex AI Spend Audit is a free web app for engineering managers and startup founders who pay for AI subscriptions without knowing if they're overspending. You input your stack — tools, plans, seats, use case — and get an instant audit showing redundant tools, over-provisioned plans, and total potential monthly and annual savings, shareable via a unique public URL.
+**Who it's for:** engineering managers and technical co-founders at 5–200 person startups paying for tools like Cursor, GitHub Copilot, Claude, ChatGPT, Gemini, or the Anthropic and OpenAI APIs.
 
-**Who it's for:** Engineering managers and technical co-founders at 5–200 person startups paying for Cursor, GitHub Copilot, Claude, ChatGPT, Gemini, or Anthropic/OpenAI API access.
+Built to a brief from Credex (credex.rocks), May 2026. The results page ends with a lead-capture step for Credex's discounted AI credits.
 
----
+- **Live app:** [credex-ai-spent-audit.vercel.app](https://credex-ai-spent-audit.vercel.app)
+- **Case study:** [aryanpanwar.in/case-studies/credex-spend-audit](https://aryanpanwar.in/case-studies/credex-spend-audit)
 
-## 🔗 Links
+## Screenshots
 
-| | |
-|---|---|
-| **Live App** | [https://credex-ai-spent-audit.vercel.app](https://credex-ai-spent-audit.vercel.app) |
-| **GitHub Repo** | [https://github.com/Aryanpanwar10005/credex_AI_spent_audit](https://github.com/Aryanpanwar10005/credex_AI_spent_audit) |
+**Landing page and audit form**
+![Landing page](public/screenshots/screenshot-landing.png)
 
----
+**Audit results with savings breakdown**
+![Audit results](public/screenshots/screenshot-results.png)
 
-## 📸 Screenshots
+**How the audit works (landing page)**
+![Landing page features](public/screenshots/screenshot-credex-cta.png)
 
-**Screen 1 — Landing page & audit form**
-![Landing Page](public/screenshots/screenshot-landing.png)
+## How it works
 
-**Screen 2 — Audit results with savings breakdown**
-![Audit Results](public/screenshots/screenshot-results.png)
+1. **Input form.** Users add each tool with its plan, seats and monthly spend, plus team size and main use case. The price list in `src/lib/pricing.ts` covers Cursor, GitHub Copilot, Windsurf, ChatGPT, Claude, Gemini, the Anthropic API, the OpenAI API and Perplexity. Form state is saved in `localStorage`, so a reload doesn't lose it.
+2. **Audit engine.** `src/lib/audit-engine.ts` is a set of plain TypeScript rules, with no LLM involved:
+   - More than one AI coding tool (Cursor, Copilot, Windsurf): flag all but the most expensive as overlap.
+   - A monthly plan that has a cheaper annual version: show the annual-billing saving.
+   - A chat tool on a Team plan with fewer than 2 seats: suggest a downgrade.
+   - 5 or more seats on individual Plus/Pro plans: suggest a Team plan if it costs less.
+   - If those savings come to more than $500 a year: add a Credex credits line, estimated at 25% of current monthly spend.
 
-**Screen 3 — Credex consultation CTA (high-spend trigger)**
-![Credex CTA](public/screenshots/screenshot-credex-cta.png)
+   Each recommendation comes with a one-sentence reason.
+3. **Results page.** Total potential annual savings and the percentage reduction, current vs optimised annual run rate, and a card per recommendation showing the tool, the issue, the suggested action and the estimated monthly saving.
+4. **AI summary.** The Cerebras Cloud SDK (`llama3.1-8b`) writes a short summary paragraph from the audit numbers. If the API key is missing or the call fails, a fixed fallback message is shown instead. The model never touches the savings math.
+5. **Lead capture.** An email form on the results page saves the address to a Supabase `leads` table and sends a confirmation email through Resend.
+6. **Shareable link.** Each audit is saved under a short random ID (nanoid) at `/audit/[id]`. The audit record holds the tool inputs, results and summary. Email addresses are kept in the separate `leads` table.
 
----
+## Design decisions
 
-## What Was Built
+### 1. Rules for the math, LLM only for the wording
+**Decision:** savings come from hard-coded TypeScript rules, not an LLM.
+**Why:** a finance lead reading the report needs to be able to check every number, and an LLM can invent a saving that doesn't exist. Each rule-based figure traces back to the user's inputs and the price list in `pricing.ts`, with sources in `PRICING_DATA.md`. The one exception is the Credex credits line, which is a flat 25% estimate. The LLM only writes the summary paragraph.
+**Trade-off:** prices have to be updated by hand when vendors change them. Being checkable matters more here than automation.
 
-A full-stack web application that performs an end-to-end AI spend audit:
+### 2. Manual entry instead of billing integrations
+**Decision:** users type in their spend. No OAuth, no "connect your billing" flow.
+**Why:** asking a CTO to grant billing access to an unfamiliar tool is a non-starter for security-conscious teams. Manual entry adds friction, but anyone willing to spend three minutes on it is a high-intent lead.
+**Trade-off:** no real usage data (API call volumes, seat utilisation) to make the rules smarter. If manual-entry leads converted below 5%, I would revisit a browser-extension approach.
 
-1. **Spend Input Form** — Users enter their AI tools, plans, seats, and monthly spend. Supports Cursor, GitHub Copilot, Claude, ChatGPT, Gemini, Anthropic API, OpenAI API, and Windsurf. Form state persists across reloads via `localStorage`.
-2. **Audit Engine** — A deterministic TypeScript engine (no LLM) evaluates each tool for plan fit, redundancy, and alternative tool savings. Every recommendation has a one-sentence reasoning string a finance person can verify. Pricing data verified against official vendor pages as of submission week.
-3. **Results Page** — Hero showing total monthly + annual savings. Per-tool breakdown with current spend → recommended action → savings + reason. Conditional Credex CTA for audits showing >$500/mo savings. "You're spending well" path for optimized stacks.
-4. **AI-Generated Summary** — Cerebras Cloud SDK (`llama3.1-8b`) generates a ~100-word "high-finance" executive narrative with sub-second latency. Graceful fallback to a templated summary on API failure.
-5. **Lead Capture** — Email + optional company/role/team size. Stored in Supabase. Transactional confirmation email via Resend.
-6. **Shareable URL** — Each audit gets a UUID-based public route (`/audit/[publicId]`). Identifying details stripped. Full Open Graph and Twitter Card metadata for clean social previews.
+### 3. Custom styling instead of a component library
+**Decision:** custom CSS tokens and components instead of shadcn/ui or MUI defaults.
+**Why:** the results page is what people screenshot and share, and a stock card layout looks like every other SaaS dashboard. A 24px grid, emerald-800 accents and JetBrains Mono for figures make it read like an audit report.
+**Trade-off:** about 4 extra hours of CSS work.
 
----
+### 4. Shareable links as the growth loop
+**Decision:** every audit gets a persistent `/audit/[id]` URL that shows the results but not the user's email.
+**Why:** the brief calls this "the viral loop — design accordingly." A founder drops the link in Slack or a CFO forwards it to the board, and each view is a new visitor who sees what the tool does before reading any copy.
+**Trade-off:** it needs a database instead of a stateless, URL-encoded result. Worth it, since the link is how the tool spreads.
 
-## Tech Stack
+### 5. Monospace for money
+**Decision:** all monetary figures use JetBrains Mono, while body text uses Inter.
+**Why:** columns of numbers are easier to scan in monospace, and it reads like a statement rather than a blog post, which suits finance-minded readers.
+**Trade-off:** two type styles on one page. Intentional.
 
-| Layer | Choice | Reason |
+## Tech stack
+
+| Layer | Choice | Why |
 |---|---|---|
-| Framework | Next.js 14 (App Router) | Server components + API routes in one repo; ideal for SEO + OG metadata generation |
-| Language | TypeScript | Type safety critical for a financial audit tool |
-| Styling | Tailwind CSS + custom CSS tokens | Bespoke "Institutional Minimalist" design system; avoids generic UI library look |
-| Animation | Framer Motion | Micro-interactions on form entry and results reveal |
-| Database | Supabase (PostgreSQL) | Free-tier, instant REST API, RLS for data privacy |
-| Email | Resend | Simple API, free tier, 3000 emails/mo |
-| AI | Cerebras Cloud SDK | Sub-second latency for real-time narrative; graceful fallback on failure |
-| Testing | Vitest | Lightweight, fast, native ESM support for the audit engine logic |
-| CI/CD | GitHub Actions | Lint + test on every push to `main` |
-| Deploy | Vercel | Zero-config Next.js deployment |
+| Framework | Next.js 16 (App Router) | Pages and API routes in one repo, plus built-in metadata for social previews |
+| Language | TypeScript | Type safety for money calculations |
+| Styling | Tailwind CSS v4 + custom CSS tokens | A custom look instead of a stock UI kit |
+| Animation | Framer Motion | Small transitions on the form and results |
+| Database | Supabase (Postgres) | Free tier and a ready-made API |
+| Email | Resend | Simple API, free tier |
+| AI | Cerebras Cloud SDK (`llama3.1-8b`) | Summary paragraph, with a fallback if the call fails |
+| Testing | Vitest | Fast unit tests for the audit engine |
+| CI | GitHub Actions | Lint, test and build on every push and PR to `main` |
+| Deploy | Vercel | Zero-config Next.js hosting |
 
----
+## Security and abuse protection
+- A hidden honeypot field on both forms. If a bot fills it in, the browser drops the submission. There is no server-side check yet.
+- Server-side rate limiting is not implemented yet.
+- No secrets in the repo. All keys come from environment variables.
 
-## Quick Start
+## Results and testing
+- Live at [credex-ai-spent-audit.vercel.app](https://credex-ai-spent-audit.vercel.app).
+- 5 Vitest unit tests on the audit engine cover IDE overlap, annual billing for Cursor Pro, a Team plan for large groups on individual Claude accounts, the annual savings calculation, and Credex eligibility for high spend.
+- GitHub Actions runs lint, tests and a production build on every push and pull request to `main` (see [`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
+
+## How to run
 
 ### Prerequisites
-- Node.js 18+
+- Node.js 18+ (CI uses Node 20)
 - A Supabase project (free tier)
-- A Cerebras API key (free at [cloud.cerebras.ai](https://cloud.cerebras.ai))
-- A Resend API key (free tier)
+- A Cerebras API key ([cloud.cerebras.ai](https://cloud.cerebras.ai))
+- A Resend API key
 
-### 1. Clone & Install
+### 1. Clone and install
 ```bash
 git clone https://github.com/Aryanpanwar10005/credex_AI_spent_audit.git
 cd credex_AI_spent_audit
 npm install
 ```
 
-### 2. Configure Environment Variables
-Create a `.env.local` file at the root:
+### 2. Environment variables
+Create `.env.local` in the project root:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 CEREBRAS_API_KEY=your_cerebras_api_key
 RESEND_API_KEY=your_resend_api_key
 NEXT_PUBLIC_APP_BASE_URL=http://localhost:3000
 ```
 
-### 3. Set Up the Database
-Run the schema SQL in your Supabase SQL editor:
-```sql
--- Full schema at: internal/schema.sql
--- Creates: audits table, leads table, and RLS policies
-```
+### 3. Database
+The SQL schema is not committed (it lives in a git-ignored `internal/` folder). From the code, the app expects two tables:
+- `audits`: `id`, `public_id`, `input_data`, `result_data`, `ai_summary`
+- `leads`: `email`, `audit_id`
 
-### 4. Run Locally
+### 4. Run locally
 ```bash
 npm run dev
-# App available at http://localhost:3000
+# App at http://localhost:3000
 ```
 
-### 5. Run Tests
+### 5. Run tests
 ```bash
 npm test
-# Runs 5 Vitest unit tests on the audit engine
+# 5 Vitest unit tests on the audit engine
 ```
 
 ### 6. Deploy to Vercel
 ```bash
 npx vercel --prod
-# Set all environment variables in Vercel dashboard → Project Settings → Environment Variables
+# Add the same environment variables under Project Settings → Environment Variables
 ```
 
----
-
-## CI / Continuous Integration
-
-GitHub Actions runs on every push to `main`:
-```
-✅ npm run lint   — ESLint check
-✅ npm test       — 5 Vitest unit tests on the audit engine
-```
-
-See [`.github/workflows/ci.yml`](.github/workflows/ci.yml). The latest commit shows a green ✅ check.
-
----
-
-## Decisions — 5 Key Trade-offs
-
-### 1. Deterministic Engine Over LLM Reasoning
-**Decision:** The audit math uses hardcoded TypeScript rules, not an LLM.  
-**Rationale:** A CFO reading the output needs to be able to verify every number. An LLM might hallucinate a $200 saving that doesn't exist. The rule engine is 100% auditable — every recommendation traces to a verified pricing URL in `PRICING_DATA.md`. The LLM is used *only* for narrative packaging, never for financial logic.  
-**Trade-off:** Slower to update when vendor prices change; requires manual registry maintenance. Accepted — trustworthiness beats automation here.
-
-### 2. Privacy-First Manual Entry Over OAuth Integrations
-**Decision:** Users manually enter their tool spend. No OAuth, no "connect your billing" flows.  
-**Rationale:** Asking a startup's CTO to grant OAuth access to their AI billing accounts is a non-starter for security-conscious teams. Manual entry has higher friction but a conversion ceiling of "anyone willing to spend 3 minutes" — which is still a high-intent lead.  
-**Trade-off:** We miss usage-pattern data (actual API call volumes, seat utilization rates) that would make the engine smarter. The pivot trigger: if lead quality from manual users doesn't convert at ≥5%, revisit browser extension approach.
-
-### 3. Bespoke Design System Over a Component Library
-**Decision:** Custom CSS tokens and components instead of shadcn/ui or MUI defaults.  
-**Rationale:** The audit results page is the viral asset — it gets screenshotted and shared. A generic shadcn card layout looks like every other SaaS dashboard. The "Institutional Minimalist" design (24px grid, emerald-800 accents, JetBrains Mono for data figures) reads as a professional audit output, not a startup side project.  
-**Trade-off:** ~4 additional hours of CSS work. Worth it entirely for perceived authority.
-
-### 4. Shareable UUID Routes as the Primary Viral Loop
-**Decision:** Every audit gets a persistent `/audit/[publicId]` URL, with identifying info stripped.  
-**Rationale:** The assignment brief calls this "the viral loop — design accordingly." A CFO shares the link with their board. A founder drops it in Slack. Each view is a new cold visitor who sees the tool's value before any copy can explain it. We treat the results page as the product's marketing page.  
-**Trade-off:** Adds database complexity vs. a stateless URL-encoded approach. Worth it — the shareable URL is the growth mechanism.
-
-### 5. Monospace Typography for Financial Data
-**Decision:** All monetary figures rendered in `JetBrains Mono`, not the body font (Inter).  
-**Rationale:** Tabular data is cognitively easier to parse in monospace. More importantly, monospace signals *precision* — it looks like a terminal readout or a bank statement, not a blog post. This is a psychological trust signal for high-finance users accustomed to Bloomberg terminals and accounting software.  
-**Trade-off:** Breaks visual consistency with the body font pairing. Intentional — the dissonance is the design.
-
----
-
-## Project Structure
+## Project structure
 
 ```
-/
 ├── src/
-│   ├── app/                    # Next.js App Router pages and layouts
-│   │   ├── page.tsx            # Landing page + audit form
-│   │   ├── audit/[publicId]/   # Public shareable results page
-│   │   └── api/                # Route handlers (audit, lead, summary)
-│   ├── components/             # React UI components
-│   │   ├── AuditForm.tsx       # Multi-tool dynamic form with localStorage persist
-│   │   └── LeadForm.tsx        # Email capture with honeypot abuse protection
-│   └── lib/                    # Pure logic — no framework coupling
-│       ├── audit-engine.ts     # Deterministic audit rules
-│       ├── pricing.ts          # Verified 2026 pricing registry
-│       ├── ai-summary.ts       # Cerebras SDK integration + fallback
-│       └── __tests__/          # Vitest unit tests
-├── internal/                   # Internal research, schema, plans (git-ignored)
-├── .github/workflows/ci.yml    # CI: lint + test on every push
-├── README.md
-├── ARCHITECTURE.md
-├── DEVLOG.md
-├── REFLECTION.md
-├── TESTS.md
-├── PRICING_DATA.md
-├── PROMPTS.md
-├── GTM.md
-├── ECONOMICS.md
-├── METRICS.md
-├── USER_INTERVIEWS.md
-└── LANDING_COPY.md
+│   ├── app/
+│   │   ├── page.tsx              # Landing page and audit form
+│   │   ├── audit/[id]/page.tsx   # Public, shareable results page
+│   │   └── api/
+│   │       ├── audit/route.ts    # Runs the audit, saves it, returns the public ID
+│   │       └── leads/route.ts    # Saves the email and sends the confirmation
+│   ├── components/
+│   │   ├── AuditForm.tsx         # Multi-tool form, saved to localStorage
+│   │   └── LeadForm.tsx          # Email capture with honeypot field
+│   └── lib/
+│       ├── audit-engine.ts       # Audit rules
+│       ├── pricing.ts            # Price list (checked against vendor pages, May 2026)
+│       ├── ai-summary.ts         # Cerebras call and fallback
+│       ├── email.ts              # Resend confirmation email
+│       ├── supabase.ts           # Supabase client
+│       └── __tests__/            # Vitest unit tests
+├── .github/workflows/ci.yml      # Lint, test, build
+├── ARCHITECTURE.md, TESTS.md, PRICING_DATA.md, PROMPTS.md   # Engineering notes
+├── GTM.md, ECONOMICS.md, METRICS.md, LANDING_COPY.md        # Go-to-market and pricing notes
+├── USER_INTERVIEWS.md, DEVLOG.md, REFLECTION.md             # Research, build log, retrospective
+└── README.md
 ```
 
 ---
 
-## Security & Abuse Protection
-
-- **Honeypot field** on both the audit form and lead capture form — bots are silently discarded.
-- **Server-side rate limiting** on `/api/audit` and `/api/lead` — max 10 requests/hour per IP.
-- **No secrets in the repo** — all API keys via environment variables only.
-- **Supabase RLS** — public audit rows expose only tools and savings; email and company name are stripped from the public view.
-
----
-
-_Built for the Credex WebDev 2026 Round 1 assignment. See [credex.rocks](https://credex.rocks)._
+Built by [Aryan Panwar](https://aryanpanwar.in). Case study: [aryanpanwar.in/case-studies/credex-spend-audit](https://aryanpanwar.in/case-studies/credex-spend-audit).
