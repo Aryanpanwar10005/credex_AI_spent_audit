@@ -77,7 +77,7 @@
 **Hours worked:** 4
 **What I did:** Created the public GitHub repository and pushed the full codebase. Set up the `.github/workflows/ci.yml` GitHub Actions pipeline (lint + vitest on every push to `main`). Provisioned Supabase production project and ran `internal/schema.sql`. Set up Resend transactional email. Configured all environment variables in Vercel and deployed to production. Final review pass on all 12 required documentation files. Fixed a minor OG metadata issue — the `og:image` was pointing to a relative path that didn't resolve on social preview scrapers; switched to an absolute URL.
 **What I learned:** Shipping is 90% logic and 10% extreme attention to detail in documentation. The gap between "works locally" and "works for someone who opens it cold" is bigger than it seems — especially for OG previews, environment variables, and Supabase RLS policies that behave differently in production vs. development.
-**Blockers / what I'm stuck on:** Resend domain verification for `credex.rocks` is pending DNS propagation. Transactional emails are queued but not delivering until DNS clears. Not blocking submission — lead capture to Supabase is working correctly.
+**Blockers / what I'm stuck on:** Resend domain verification for `credex.rocks` is pending DNS propagation. Transactional emails are queued but not delivering until DNS clears. Not blocking launch — lead capture to Supabase is working correctly.
 **Plan for tomorrow:** Monitor CI pipeline, verify DNS for Resend, and address any issues flagged in the first production E2E test.
 
 ---
