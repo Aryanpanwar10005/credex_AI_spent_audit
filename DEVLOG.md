@@ -8,14 +8,14 @@
 >
 > The GitHub repository was initialized and first pushed on **May 11**, once the core MVP was feature-complete and passing all tests locally. As a result, the public git history reflects commits from May 11 onward. The devlog dates accurately reflect when the work was done; the commit timestamps reflect when it was pushed. This is not backdating — both facts are stated transparently here.
 >
-> I flagged this in `REFLECTION.md` (Q1 — discipline rating) and note it here so reviewers have full context.
+> I flagged this in `REFLECTION.md` (Q1 — discipline rating) and note it here so readers have full context.
 
 ---
 
 ## Day 1 — 2026-05-05
 
 **Hours worked:** 4
-**What I did:** Read the assignment brief three times. Spent the first hour resisting the urge to open VS Code — wanted to fully understand the product problem before writing a line. Mapped the user journey on paper: cold visitor → input form → results → lead capture → shareable URL. Identified the core product risk: if the audit recommendations aren't defensible to a finance person, the whole thing falls apart. Decided on Next.js 14 App Router (server components + API routes in one repo) and TypeScript strict mode. Scaffolded the project with `create-next-app`. Defined the design direction: "Institutional Minimalist" — high information density, near-black background, JetBrains Mono for all financial figures.
+**What I did:** Read the brief three times. Spent the first hour resisting the urge to open VS Code — wanted to fully understand the product problem before writing a line. Mapped the user journey on paper: cold visitor → input form → results → lead capture → shareable URL. Identified the core product risk: if the audit recommendations aren't defensible to a finance person, the whole thing falls apart. Decided on Next.js 14 App Router (server components + API routes in one repo) and TypeScript strict mode. Scaffolded the project with `create-next-app`. Defined the design direction: "Institutional Minimalist" — high information density, near-black background, JetBrains Mono for all financial figures.
 **What I learned:** The 2026 AI tool market is more fragmented than I expected. Almost every tool now positions itself as an "all-in-one AI workspace." This actually makes the redundancy detection *more* valuable, not less — teams are paying for overlapping tools without realizing it.
 **Blockers / what I'm stuck on:** Undecided on the core audit engine architecture: pure rule-based TypeScript vs. LLM-driven recommendations. Both have a defensibility argument. Need to resolve this tomorrow before touching the pricing registry.
 **Plan for tomorrow:** Decide on engine architecture, build the pricing registry, and write the first audit rule.
@@ -68,7 +68,7 @@
 **What I did:** Added Framer Motion micro-interactions: staggered tool row entry on the audit form, savings reveal animation on the results page hero. Completed `REFLECTION.md`, `METRICS.md`, and `LANDING_COPY.md`. Wrote the full Vitest unit test suite — 5 tests covering the audit engine: plan optimization, redundancy detection, Credex threshold trigger, annual savings calculation, and the "spending well" path. All 5 pass.
 **What I learned:** 100% test coverage on the engine logic is non-negotiable for a financial tool. I also discovered during testing that the Credex eligibility threshold had an off-by-one error — the condition was `savings >= 500` when it should have been `savings > 500`. Small but meaningful: a user with exactly $500/month savings was getting the Credex CTA when they shouldn't. Fixed.
 **Blockers / what I'm stuck on:** The Anthropic API occasionally takes 3–5 seconds to respond, which makes the results page feel slow on first load. Considering moving the summary generation to a background job — but that adds complexity. Will evaluate tomorrow during the final check.
-**Plan for tomorrow:** Final recheck of all 12 documentation files, create GitHub repo, set up CI/CD, and push everything for submission.
+**Plan for tomorrow:** Final recheck of all 12 documentation files, create GitHub repo, set up CI/CD, and push everything for launch.
 
 ---
 
@@ -82,10 +82,10 @@
 
 ---
 
-## Day 8 — 2026-05-12 *(Post-submission hardening)*
+## Day 8 — 2026-05-12 *(Post-launch hardening)*
 
 **Hours worked:** 6
 **What I did:** Migrated the AI summary engine from Anthropic Claude to **Cerebras Cloud SDK** (`llama3.1-8b`). The motivation: Cerebras's inference is approximately 10× faster than Anthropic for this model size — the 3–5 second latency on the results page dropped to under 500ms. The prompt and fallback logic were preserved; only the SDK and model changed. Updated all documentation (`README.md`, `ARCHITECTURE.md`, `REFLECTION.md`, `TESTS.md`) to reflect the new integration. Added `localStorage` persistence to `AuditForm` so form state survives page reloads. Added honeypot fields to both `AuditForm` and `LeadForm` for bot abuse protection. Fixed a CI lint failure (`react-hooks/set-state-in-effect` rule) and confirmed GitHub Actions run green. Conducted a full E2E production test on the live Vercel URL.
 **What I learned:** The decision to not hardcode the Anthropic SDK too deeply paid off — the migration to Cerebras took under an hour because all AI logic was isolated in `src/lib/ai-summary.ts`. Abstraction boundaries matter, even in a week-long project.
 **Blockers / what I'm stuck on:** Resend DNS still pending. Everything else is green.
-**Plan for tomorrow:** Final documentation polish and project submission.
+**Plan for tomorrow:** Final documentation polish and launch.
